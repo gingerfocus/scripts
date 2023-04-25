@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# the default way in which the hyprctl gets cursor
+# position results in the position being inverted
+# on the y axis
+
+# this script fixes that
+
+
+normal_x=$(hyprctl cursorpos | awk -F',' '{print $1}') 
+normal_y=$(hyprctl cursorpos | awk '{print $2}')
+
+window_height=$(hyprctl monitors | grep ' at ' | awk -F'@' '{print $1}' | awk -F'x' '{print $2}') 
+
+better_pos=$(($window_height-$normal_y))
+
+echo "$normal_x, $better_pos"
+

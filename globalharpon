@@ -1,0 +1,90 @@
+#!/bin/sh
+
+# A script to add files to a global list and quicly open them to edit
+
+menu="rofi -dmenu"
+data="/home/focus/.local/share/harpoon-list.db"
+
+query_add() {
+    dir=$(pwd)
+    done=""
+    while [ -z $done ]; do 
+        contents=$(echo "$(command ls -a -1 $dir)" "\nQUIT")
+        cur=$(echo "$contents" | $menu)
+
+        dir=$dir/$cur
+        
+        if [ -z $cur ]; then
+            exit 0
+        fi
+
+        if [ ! -d $dir ]; then
+            done="yup"
+        fi
+
+        if [ $cur = "QUIT" ]; then
+            exit 0
+        fi
+    done
+    selection=$(realpath "$dir")
+}
+
+query_go() {
+    chosen="$(echo "$(cat $data)" "\nQUIT" | $menu)"
+    
+    if [ -z $chosen ]; then
+        exit 0
+    fi
+
+    if [ $chosen = "QUIT" ]; then
+        exit 0
+    fi
+    selection=$chosen
+}
+
+query_remove() {
+    selection="$(cat $data | $menu)"
+}
+
+echo $#
+if [ $# = "0" ]; then
+    # get the option
+    choice=$(echo "add\ngo\nremove\nQUIT" | rofi -dmenu)
+    if [ -z $choice ]; then
+        exit 0
+    fi
+
+    if [ $choice = "QUIT" ]; then
+        exit 0
+    else
+        option=$choice
+    fi
+else
+    option=$1
+fi
+
+case $option in
+    add)
+        query_add
+        grep "$selection" $data \
+            && notify-send "$selection was already in the harpoon list, skipped" \
+            || echo $selection >> $data 
+        ;;
+    go)
+        query_go
+        # -D $dir
+        setsid -f $TERMINAL -e $EDITOR $selection
+        ;;
+    remove)
+        query_remove
+        # I dont use -i flag is it isn't posix
+        if [ ! -z $selection ]; then
+            replace=$(sed -e "/$selection/d" $data)
+            echo "$replace" > $data
+        fi
+        ;;
+    *)
+        exit 1
+        ;;
+esac
+
