@@ -1,0 +1,13 @@
+#!/bin/bash
+
+raw=$(mediainfo --Output=JSON "$1" | jq '.media.track[] | .["Title", "Album", "Performer", "FileSize", "OverallBitRate", "Duration", "Language"]' | sed 's/"//g' | sed '/null/d' )
+
+readarray -t arr <<<"$raw"
+
+echo "Title:    " ${arr[0]}
+echo "Artist:   " ${arr[2]}
+echo "Album:    " ${arr[1]}
+echo "Size:     " $(numfmt --to=iec ${arr[3]})
+echo "Bitrate:  " "$(numfmt --to=iec ${arr[4]})/s"
+echo "Duration: " $(date -d@${arr[5]} -u +%M:%S) # %H
+echo "Language: " ${arr[7]}

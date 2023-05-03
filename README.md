@@ -1,4 +1,4 @@
 
-* Scripts
+# Scripts
 
 A collections of my scripts that i have made. Made avalable to you if you have any use for them.
