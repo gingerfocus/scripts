@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+
+from mutagen.oggvorbis import OggVorbis
+from mutagen.flac import Picture
+import base64
+import sys
+import os
+
+def main():
+    filename = sys.argv[1]
+    thumbnail = sys.argv[2]
+
+    full_filename = os.path.realpath(filename)
+    full_thumbnail = os.path.realpath(thumbnail)
+
+    if not os.path.exists(full_filename):
+        print('The file (' + full_filename + ') is missing.')
+        return
+
+    if not full_filename.endswith(".ogg"):
+        print('Please supply an ogg file to embed')
+        return
+
+    if not os.path.exists(full_thumbnail):
+        print('The file (' + full_thumbnail + ') is missing.')
+        return 
+
+    if full_thumbnail.endswith(".jpg") or full_thumbnail.endswith(".jpeg"):
+        mime = 'image/jpeg'
+    elif full_thumbnail.endswith(".png"):
+        mime = 'image/png'
+    else:
+        print("Unsupported image format, please pass ina jpg/jpeg/png")
+
+    pic = Picture()
+    pic.mime = mime
+
+    # TODO: resize any large images to with 500x500 or 900x900
+    with open(full_thumbnail, 'rb') as thumbfile:
+        pic.data = thumbfile.read()
+    pic.type = 3  # front cover
+    # res = self._get_thumbnail_resolution(thumbnail_filename, info['thumbnails'][idx])
+    # if res is not None:
+    #     pic.width, pic.height = res
+
+    audio = OggVorbis(full_filename)
+
+    audio['METADATA_BLOCK_PICTURE'] = base64.b64encode(pic.write()).decode('ascii')
+    audio.save()
+
+
+# the OGg shell script
+# audio_file="$1"
+# art_file="$2"
+#
+# base_pic=$(base64 -i "$art_file")
+# vorbiscomment -a "$audio_file" -R -t "METADATA_BLOCK_PICTURE=$base_pic"
+
+if __name__ == "__main__":
+    main()

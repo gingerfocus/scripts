@@ -1,0 +1,12 @@
+#!/bin/bash
+
+case $1 in
+up)
+	brightnessctl set +5% > /dev/null
+	notify-send -t 2000 "$(printf "Brightness up to: %s" "$(brightnessctl info | grep % | awk -F' ' '{ print $4 }')")"
+	;;
+down)
+	brightnessctl set 5%- > /dev/null
+	notify-send -t 2000 "$(printf "Brightness down to: %s" "$(brightnessctl info | grep % | awk -F' ' '{ print $4 }')")"
+	;;
+esac

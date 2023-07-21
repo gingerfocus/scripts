@@ -17,7 +17,11 @@ $TERMINAL -e $EDITIOR
 but this can be changed.
 
 
-## Mediainfo++ 
+## Oggart
 
-More like a minus-minus version as it s focus is on removing features and only displaying the info you need in a easy to understand way.
+Attack an image to an ogg file through metadata
+
+## Qrclip
+
+Take what is in your clip board and make a qrcode out of it
 

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# generates burner passwords 
+
+dd if=/dev/urandom bs=1 count=36 2>/dev/null | base64 | sed 's/[\/+]//g'

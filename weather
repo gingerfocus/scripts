@@ -1,0 +1,9 @@
+#!/bin/sh
+
+
+location="$(curl -s "https://ipvigilante.com/" | jq -r '.data.city_name')"
+weather="$(curl -s "wttr.in/${location}?format=Current+weather+for+%l:+%c%t+▪+%h+humidity+▪+%w+wind")"
+
+notify-send "Weather Info" "$weather"
+echo $weather
+

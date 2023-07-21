@@ -1,0 +1,7 @@
+#!/bin/sh
+
+#selection=$(cliphist list | rofi -dmenu | cliphist decode)
+selection="$(wl-paste)"
+notify-send "$selection"
+qrencode -t PNG -s 8 -o /tmp/qr.png $selection
+feh /tmp/qr.png -Z
