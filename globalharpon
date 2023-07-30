@@ -7,89 +7,84 @@ data="/home/focus/.local/share/harpoon-list.db"
 open="setsid -f $TERMINAL -e $EDITOR"
 
 query_add() {
-    dir=$(pwd)
-    done=""
-    while [ -z $done ]; do 
-        contents=$(echo "$(command ls -a -1 $dir)" "\nQUIT")
-        cur=$(echo "$contents" | $menu)
+	dir=$(pwd)
+	done=""
+	while [ -z $done ]; do
+		contents=$(echo -e "$(command ls -a -1 $dir)" "\nQUIT")
+		cur=$(echo "$contents" | $menu)
 
-        dir=$dir/$cur
-        
-        if [ -z $cur ]; then
-            exit 0
-        fi
+		dir=$dir/$cur
 
-        if [ ! -d $dir ]; then
-            done="yup"
-        fi
+		if [ -z $cur ]; then
+			exit 0
+		fi
 
-        if [ $cur = "QUIT" ]; then
-            exit 0
-        fi
-    done
-    selection=$(realpath "$dir")
+		if [ ! -d $dir ]; then
+			done="yup"
+		fi
+
+		if [ $cur = "QUIT" ]; then
+			exit 0
+		fi
+	done
+	selection=$(realpath "$dir")
 }
 
 query_go() {
-    chosen="$(echo "$(cat $data)" "\nQUIT" | $menu)"
-    
-    if [ -z $chosen ]; then
-        notify-send -t 3000 "No file chosen"
-        exit 1
-    fi
-    if [ ! -f $chosen ]; then
-        notify-send -t 5000 "$chosen is not a file"
-        exit 1
-    fi
-    if [ $chosen = "QUIT" ]; then
-        exit 0
-    fi
-    selection=$chosen
+	chosen="$(echo -e "$(cat $data)" "\nQUIT" | $menu)"
+
+	if [ -z $chosen ]; then
+		notify-send -t 3000 "No file chosen"
+		exit 1
+	fi
+	if [ ! -f $chosen ]; then
+		notify-send -t 5000 "$chosen is not a file"
+		exit 1
+	fi
+	if [ $chosen = "QUIT" ]; then
+		exit 0
+	fi
+	selection=$chosen
 }
 
 query_remove() {
-    chosen="$(cat $data | $menu)"
-    if [ -z $chosen ]; then
-        exit 1
-    fi
-    if [ $chosen = "QUIT" ]; then
-        exit 0
-    fi
-    selection=$chosen
+	chosen="$(echo -e "$(cat $data)" "\nQUIT" | $menu)"
+	if [ -z $chosen ]; then
+		exit 1
+	fi
+	if [ $chosen = "QUIT" ]; then
+		exit 0
+	fi
+	selection=$chosen
 }
 
 if [ $# = "0" ]; then
-    choice=$(echo "add\ngo\nremove\nQUIT" | rofi -dmenu)
+	choice=$(echo -e "add\ngo\nremove\nQUIT" | rofi -dmenu)
 
-    if [ -z $choice -o $choice = "QUIT" ]; then
-        exit 0
-    fi
-    option=$choice
+	if [ -z $choice -o $choice = "QUIT" ]; then
+		exit 0
+	fi
+	option=$choice
 else
-    option=$1
+	option=$1
 fi
 
 case $option in
-    add)
-        query_add
-        grep "$selection" $data \
-            && notify-send "$selection was already in the harpoon list, skipped" \
-            || echo $selection >> $data 
-        ;;
-    go)
-        query_go
-        $open $selection
-        ;;
-    remove)
-        query_remove
-        # I dont use -i flag is it isn't posix
-        if [ ! -z $selection ]; then
-            replace=$(sed -e "/$selection/d" $data)
-            echo "$replace" > $data
-        fi
-        ;;
-    *)
-        exit 1
-        ;;
+add)
+	query_add
+	grep "$selection" $data &&
+		notify-send "$selection was already in the harpoon list, skipped" ||
+		echo $selection >>$data
+	;;
+go)
+	query_go
+	$open $selection
+	;;
+remove)
+	query_remove
+	sed -e -i "/$selection/d" $data
+	;;
+*)
+	exit 1
+	;;
 esac
-

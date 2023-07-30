@@ -2,21 +2,19 @@
 #
 #!/bin/sh
 
+cursorpos-inv() {
+	normal_x=$(hyprctl cursorpos | awk -F',' '{print $1}')
+	normal_y=$(hyprctl cursorpos | awk '{print $2}')
 
-cursorpos-inv () {
-    normal_x=$(hyprctl cursorpos | awk -F',' '{print $1}') 
-    normal_y=$(hyprctl cursorpos | awk '{print $2}')
+	window_height=$(hyprctl monitors | grep ' at ' | awk -F'@' '{print $1}' | awk -F'x' '{print $2}')
 
-    window_height=$(hyprctl monitors | grep ' at ' | awk -F'@' '{print $1}' | awk -F'x' '{print $2}') 
+	better_pos=$(($window_height - $normal_y))
 
-    better_pos=$(($window_height-$normal_y))
-
-    echo "$normal_x, $better_pos"
+	echo "$normal_x, $better_pos"
 }
 
-files=(~/pix/wallpaper/*)
-index=$(seq 0 $((${#files[@]}-1)) | shuf -n1)
-wall="${files[$index]}"
+wall=$(echo "$HOME/pix/wallpaper/$(ls ~/pix/wallpaper/ | shuf | head -n 1)")
 
-swww img $wall --transition-type grow --transition-pos "$(~/.config/scripts/cursorpos-inv)" --transition-duration 2
-
+# swww img $wall --transition-type grow --transition-pos "$(~/.config/scripts/cursorpos-inv)" --transition-duration 2
+killall swaybg
+hyprctl dispatch exec "swaybg -m fill -i \"$wall\""
