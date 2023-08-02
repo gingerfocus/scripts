@@ -1,0 +1,33 @@
+#!/bin/sh
+
+### A basic wrapper around mpd commands
+
+
+case "$1" in
+    "init")
+        mpc clear
+        mpc load all
+        mpc shuffle
+        mpc play
+        ;;
+    "next")
+        # this is bad fix to a strange bug that i dont understand
+        mpc next >/dev/null;
+        mpc pause >/dev/null;
+        mpc play
+    ;;
+    "toggle")
+        mpc toggle
+        ;;
+    "prev")
+        mpc prev >/dev/null
+        mpc pause >/dev/null;
+        mpc play
+    ;;
+    "pause")
+        mpc pause
+    ;;
+    "play")
+        mpc play
+    ;;
+esac

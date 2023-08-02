@@ -1,26 +1,22 @@
 #!/bin/sh
 
-cur_vol=$(amixer get Master | tail -n1 | awk -F'[' '{ print $2 }' | tr ']' ' ' | xargs)
+on=$(amixer get Master | tail -n1 | awk -F'[' '{ print $3 }' | tr ']' ' ' | xargs)
 
 case $1 in
 mute)
-	if [ $cur_vol = "0%" ]; then
-		new_vol=$(cat /tmp/last_mute)
-		amixer set Master $new_vol || amixer set Master 20%
-	else
-		echo "$cur_vol" >/tmp/last_mute
-		amixer set Master 0
-	fi
+    case $on in 
+    "on")
+        amixer set Master mute
+        ;;
+    "off")
+        amixer set Master unmute
+        ;;
+    esac
 	;;
 up)
-	if [ $cur_vol = "0%" ]; then
-		new_vol=$(cat /tmp/last_mute)
-		amixer set Master $new_vol || amixer set Master 1%
-	else
-		amixer set Master 1%+
-	fi
+	amixer set Master 2%+
 	;;
 down)
-	amixer set Master 1%-
+	amixer set Master 2%-
 	;;
 esac

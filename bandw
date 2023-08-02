@@ -1,9 +1,6 @@
-#!/usr/bin/fish
+#!/usr/bin/env fish
 
 set -l init "$(cat /sys/class/net/w*/statistics/rx_bytes | paste -sd '+')"
-
-
-
 
 echo -n "Recording bandwidth. Press enter to stop."
 
@@ -12,7 +9,7 @@ sh -c "read -r lol"
 set -l fin "$(cat /sys/class/net/w*/statistics/rx_bytes | paste -sd '+')"
 
 set -l used $(numfmt --to=iec $(math "$fin - $init"))
-set -l message $(echo $used "of bandwidth used.") 
+set -l message $(echo $used "of bandwidth used.")
 
 notify-send $message
 echo $message 
