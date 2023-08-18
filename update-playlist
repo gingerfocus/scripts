@@ -15,5 +15,11 @@ for f in $(find $XDG_MUSIC_DIR -name "*.ogg"); do
     done
 done
 
+# for album in $(exa --only-dirs -1 -a --color never $XDG_MUSIC_DIR); do
+#     for f in $(find "$XDG_MUSIC_DIR/$album" -name "*.ogg"); do
+#         echo "$f" >> "$playlist_dir/$album.m3u"
+#     done
+# done
+
 mpc update
 notify-send -t 5000 "Playlists updated!"
