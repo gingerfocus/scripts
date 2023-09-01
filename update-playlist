@@ -8,7 +8,7 @@ for f in `find $playlist_dir | tail +2`; do
 done
 
 for f in $(find $XDG_MUSIC_DIR -name "*.ogg"); do
-    tags=$(vorbiscomment -l $f | grep "tags=" | cut -d'=' -f2)
+    tags=$(vorbiscomment -l "$f" | grep "tags=" | cut -d'=' -f2)
     echo "$f" >> "$playlist_dir/all.m3u"
     for tag in $tags; do
         echo "$f" >> "$playlist_dir/$tag.m3u"
