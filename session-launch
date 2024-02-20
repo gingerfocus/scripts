@@ -1,0 +1,26 @@
+#!/bin/sh
+
+case "$1" in
+    "hypr")
+        export XDG_SESSION_TYPE=wayland
+        export XDG_SESSION_DESKTOP=Hyprland
+        export XDG_CURRENT_DESKTOP=Hyprland
+
+        # Bug fixing
+        export WLR_RENDERER_ALLOW_SOFTWARE=1
+        export LIBSEAT_BACKEND=logind
+
+        export MESA_GL_VERSION_OVERRIDE=3.3
+        export MESA_GLSL_VERSION_OVERRIDE=330
+        export MESA_GLES_VERSION_OVERRIDE=3.1
+
+        exec dbus-run-session Hyprland $@
+    ;;
+    "gnome") 
+        XDG_SESSION_TYPE=wayland dbus-run-session gnome-session
+    ;;
+    *)
+        echo "Unknown Desktop: " $1
+        exit 1
+    ;;
+esac

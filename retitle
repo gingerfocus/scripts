@@ -1,0 +1,15 @@
+#!/bin/sh
+
+
+file="$1"
+
+name="$(echo $file | awk -F'[' '{ print $1 }')"
+
+title="$(echo "$name" | tr -d '[:punct:]' | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | sed "s/-\+/-/g;s/\(^-\|-\$\)//g")"
+
+newfile="$(echo $title".ogg")"
+
+echo "file: " $file
+echo "newfile: " $newfile
+
+mv "$file" "$newfile"
