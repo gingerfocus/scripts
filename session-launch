@@ -10,17 +10,22 @@ case "$1" in
         export WLR_RENDERER_ALLOW_SOFTWARE=1
         export LIBSEAT_BACKEND=logind
 
-        export MESA_GL_VERSION_OVERRIDE=3.3
-        export MESA_GLSL_VERSION_OVERRIDE=330
-        export MESA_GLES_VERSION_OVERRIDE=3.1
+        ## asahi fixes
+        # export MESA_GL_VERSION_OVERRIDE=3.3
+        # export MESA_GLSL_VERSION_OVERRIDE=330
+        # export MESA_GLES_VERSION_OVERRIDE=3.1
 
-        exec dbus-run-session Hyprland $@
+        exec dbus-run-session Hyprland "$@"
     ;;
-    "gnome") 
+    "gnome")
         XDG_SESSION_TYPE=wayland dbus-run-session gnome-session
     ;;
+    "")
+        echo "Enter a Desktop to run. (hypr or gnome)."
+        exit 1
+    ;;
     *)
-        echo "Unknown Desktop: " $1
+        echo "Unknown Desktop: " "$1"
         exit 1
     ;;
 esac
