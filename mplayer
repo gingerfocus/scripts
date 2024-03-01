@@ -1,0 +1,33 @@
+#!/bin/sh
+
+die() {
+    echo "$@"
+    exit 1
+}
+
+OPTION_PLAY="play"
+OPTIONS="pause $OPTION_PLAY next"
+
+players=$(playerctl -l)
+
+PLAYERCTL_FORMAT="\
+player: {{playerName}}
+title: {{title}}
+artist: {{artist}}
+status: {{lc(status)}}
+playing: {{duration(position)}}|{{duration(mpris:length)}}\
+"
+
+player=$(echo "$players" | fzf --preview "playerctl metadata -p {1} --format '$PLAYERCTL_FORMAT'")
+[ -n "$player" ] || die "no player selected"
+
+
+choice="$(echo "$OPTIONS" | tr ' ' '\n' | fzf --delimiter ' ')"
+[ -n "$choice" ] || die "no choice selected"
+
+case "$choice" in
+    "pause") playerctl -p "$player" pause ;;
+    "$OPTION_PLAY") playerctl -p "$player" play ;;
+    "next") playerctl -p "$player" next ;;
+    *) die "How did you get here?" ;;
+esac

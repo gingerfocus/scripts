@@ -1,0 +1,22 @@
+#!/bin/sh
+
+die() {
+    echo "$@"
+    exit 1
+}
+
+NIX_DIR="$HOME/dev/iyuma"
+
+cd "$NIX_DIR" || die "Couldn't find source directory. ($NIX_DIR)'"
+
+alejandra . 2>&1 | grep 'Formatted:'
+# git diff -U0 ./*.nix
+echo "NixOS Rebuilding..."
+
+(sudo nixos-rebuild switch --flake '.#steamfunk' 2>&1 | tee ./nixos-switch.log) \
+    || (grep --color error nixos-switch.log && exit 1)
+
+# gen=$(nixos-rebuild list-generations | grep current)
+# git commit -am "$gen"
+
+unset NIX_DIR
