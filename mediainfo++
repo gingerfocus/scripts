@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 raw=$(mediainfo --Output=JSON "$1" | jq '.media.track[] | .["Title", "Album", "Performer", "FileSize", "OverallBitRate", "Duration", "Language"]' | sed 's/"//g' | sed '/null/d' )
 
