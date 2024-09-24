@@ -1,0 +1,8 @@
+#!/bin/sh
+
+swaylock &
+lockid=$!
+
+systemctl suspend
+
+wait $lockid

@@ -1,0 +1,20 @@
+#!/bin/sh
+
+items() {
+    for d in $(echo $XDG_DATA_DIRS | tr ':' '\n'); do
+        dir="$d/applications"
+        [ -d "$dir" ] || continue
+        for f in $(ls -1 $dir); do
+            echo "$dir/$f"
+        done
+    done
+}
+
+files=$(items)
+
+selection=$(grep -h -m1 -E '^Name=[a-Z 0-9]+$' $files | cut -d'=' -f2 | uniq | bemenu -i)
+
+command=$(grep 'Exec=' $(grep -l "^Name=$selection" $files) | sed -e "s/Exec=//;s/%U/$@/")
+
+setsid -f $command
+

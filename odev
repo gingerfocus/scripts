@@ -1,0 +1,27 @@
+#!/bin/sh
+
+DEVDIRS="$HOME/.local/share/neomacs/devdirs.json"
+SESH="$(jq keys[] $DEVDIRS -r | fzf --tmux 70%)"
+
+[ -z "$SESH" ] && exit 1
+
+tmux has-session -t $SESH 2>/dev/null
+
+if [ $? != 0 ]; then
+    SESHDIR=$(jq ."$SESH".dir $DEVDIRS -r)
+    [ "$SESHDIR" = "null" ] && SESHDIR="$HOME/dev/$SESH"
+
+    tmux new-session -c $SESHDIR -d -s $SESH -n "editor"
+
+    # tmux send-keys -t $SESH:editor "nvim README.md" C-m
+
+    # tmux new-window -t $SESH -n server
+    # tmux send-keys -t $SESH:server "nix run .#serve" C-m
+fi
+
+if [ -n "$TMUX" ]; then
+    tmux switch-client -t $SESH
+else
+    tmux attach -t $SESH
+fi
+
